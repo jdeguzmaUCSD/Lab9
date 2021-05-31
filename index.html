@@ -52,21 +52,108 @@
     <button>Start Timer</button>
     <button>End Timer</button>
     <button>Console Trace</button>
-    <button>Trigger a Global Error</button>
   </section>
 
   <script>
+    // step 4
+    class CalculationError extends Error {
+      constructor(message) {
+      super(message); // (1)
+      this.name = "CalculationError"; // (2)
+      }
+    }
+
     let calculateBtn = document.querySelector('#calculate');
     calculateBtn.addEventListener('click', () => {
       let output = document.querySelector('output');
       let firstNum = document.querySelector('#first-num').value;
       let secondNum = document.querySelector('#second-num').value;
       let operator = document.querySelector('#operator').value;
+
+      if(secondNum == 0 && operator == '/') {
+        if(firstNum == 0) {
+          throw new CalculationError("Undefined");
+        } else {
+          throw new CalculationError("Divide by zero");
+        }
+      }
+
+      // step 3
+      try {
+        // throw error if inputs not entered      
+        output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+      } catch (err) {
+        console.log(err);
+      } finally {
+        console.log('output: ' + document.querySelector('output').innerHTML);
+      }
+      if(firstNum == 6 && secondNum == 9) {
+        throw new Error("Unfunny joke spotted");
+      }
       output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
     });
 
     let errorBtns = Array.from(document.querySelectorAll('#error-btns > button'));
-    // TODO - Make buttons functional
+    // step 2
+    errorBtns[0].addEventListener('click', () => {
+      console.log("operator: " + document.getElementById("operator").value);
+    });
+    errorBtns[1].addEventListener('click', () => {
+      console.error("throwing error");
+    });
+    errorBtns[2].addEventListener('click', () => {
+      console.dir(document.getElementById("calculate"));
+    });
+    errorBtns[3].addEventListener('click', () => {
+      console.dirxml(document.getElementById("error-btns"));
+    });
+    const label = 'Calculator ';
+    errorBtns[4].addEventListener('click', () => {
+      console.group(label);
+      console.info(document.querySelector('output').innerHTML);
+      console.info(document.querySelector('#first-num').value);
+      console.info(document.querySelector('#second-num').value);
+    });
+    errorBtns[5].addEventListener('click', () => {
+      console.groupEnd(label);
+    });  
+    errorBtns[6].addEventListener('click', () => {
+      const term1 = document.querySelector('output').innerHTML;
+      const term2 = document.querySelector('#first-num').value;
+      const out = document.querySelector('#second-num').value
+      console.table([
+        {
+          first: term1,
+          second: term2,
+          expected_sum: out
+        },
+        {
+          first: term1,
+          second: term2,
+          expected_product: out
+        }
+      ]);
+    });  
+    errorBtns[7].addEventListener('click', () => {
+      console.time();
+    });  
+    errorBtns[8].addEventListener('click', () => {
+      console.timeEnd();
+    });   
+    errorBtns[9].addEventListener('click', () => {
+      console.trace();
+    });  
+  
+    
+
   </script>
+  <script src="https://cdn.trackjs.com/agent/v3/latest/t.js"></script>
+  <script>
+    window.TrackJS && TrackJS.install({ 
+      token: "fb0717396f12495cb40ac04ab98a11ce"
+      // for more configuration options, see https://docs.trackjs.com
+    });
+  </script>
+
 </body>
 </html>
